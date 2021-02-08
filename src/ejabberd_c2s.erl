@@ -1507,9 +1507,15 @@ print_state(State = #state{pres_t = T, pres_f = F, pres_a = A, pres_i = I}) ->
 %%----------------------------------------------------------------------
 -spec terminate(Reason :: any(), statename(), state(), list()) -> ok.
 terminate({handover_session, From}, StateName, StateData, UnreadMessages) ->
+    ?LOG_INFO(#{what => terminate_handover_session, 
+                text => <<"Start terminate handover session">>}),
     % do handover first
     NewStateData = do_handover_session(StateData, UnreadMessages),
+    ?LOG_INFO(#{what => terminate_handover_session, 
+                text => <<"After do handover session, before send IQ">>}),
     p1_fsm_old:reply(From, {ok, NewStateData}),
+    ?LOG_INFO(#{what => terminate_handover_session, 
+                text => <<"after send iq, before terminate normal">>}),
     % and then run the normal termination
     terminate(normal, StateName, NewStateData, []);
 terminate(_Reason, StateName, StateData, UnreadMessages) ->
