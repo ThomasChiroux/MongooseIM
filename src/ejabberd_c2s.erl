@@ -1517,7 +1517,9 @@ terminate({handover_session, From}, StateName, StateData, UnreadMessages) ->
     ?LOG_INFO(#{what => terminate_handover_session, 
                 text => <<"after send iq, before terminate normal">>}),
     % and then run the normal termination
-    terminate(normal, StateName, NewStateData, []);
+    terminate(normal, StateName, NewStateData, []),
+    ?LOG_INFO(#{what => terminate_handover_session, 
+                text => <<"End of terminate handover session">>});
 terminate(_Reason, StateName, StateData, UnreadMessages) ->
     InitialAcc0 = mongoose_acc:new(
              #{location => ?LOCATION, lserver => StateData#state.server, element => undefined}),
@@ -3200,7 +3202,11 @@ handover_session(SD, From)->
                               SD#state.jid,
                               resumed),
     %the actual handover to be done on termination
-    {stop, {handover_session, From}, SD}.
+    ?LOG_INFO(#{what => handover_session, 
+                text => <<"before STOP handover session">>}),
+    {stop, {handover_session, From}, SD},
+    ?LOG_INFO(#{what => handover_session, 
+                text => <<"after STOP handover session">>}).
 
 do_handover_session(SD, UnreadMessages) ->
     Messages = flush_messages(UnreadMessages),
