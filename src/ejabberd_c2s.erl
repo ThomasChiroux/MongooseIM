@@ -1517,7 +1517,7 @@ terminate({handover_session, From}, StateName, StateData, UnreadMessages) ->
     ?LOG_INFO(#{what => terminate_handover_session, 
                 text => <<"after send iq, before terminate normal">>}),
     % and then run the normal termination
-    terminate(normal, StateName, NewStateData, []).
+    terminate(normal, StateName, NewStateData, []);
 terminate(_Reason, StateName, StateData, UnreadMessages) ->
     InitialAcc0 = mongoose_acc:new(
              #{location => ?LOCATION, lserver => StateData#state.server, element => undefined}),
@@ -1585,7 +1585,11 @@ terminate(_Reason, StateName, StateData, UnreadMessages) ->
             end,
             reroute_unacked_messages(StateData, UnreadMessages)
     end,
+    ?LOG_INFO(#{what => terminate_session, 
+                text => <<"terminate after case ,before close">>}),
     (StateData#state.sockmod):close(StateData#state.socket),
+    ?LOG_INFO(#{what => terminate_session, 
+                text => <<"terminate after close">>}),
     ok.
 
 -spec reroute_unacked_messages(StateData :: state(), list()) -> any().
