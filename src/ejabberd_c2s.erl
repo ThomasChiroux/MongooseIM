@@ -1512,7 +1512,7 @@ terminate({handover_session, From}, StateName, StateData, UnreadMessages) ->
     p1_fsm_old:reply(From, {ok, NewStateData}),
     % and then run the normal termination
     terminate(normal, StateName, NewStateData, []),
-    ok.
+    ok;
 terminate(_Reason, StateName, StateData, UnreadMessages) ->
     InitialAcc0 = mongoose_acc:new(
              #{location => ?LOCATION, lserver => StateData#state.server, element => undefined}),
